@@ -1,0 +1,74 @@
+###Using sed utility###
+
+# 1- Display the lines that contain the word “lp” in /etc/passwd file.
+sed -n "/lp/p" /etc/passwd  
+# -n suppresses automatic printing of each line.
+# "/lp/p" matches lines that contain "lp" and prints them.
+
+# 2- Display /etc/passwd file except the third line.
+sed "3d" /etc/passwd
+# 3 → refers to the third line.
+# d → option to delete.
+
+# 3- Display /etc/passwd file except the last line.
+sed "$d" /etc/passwd
+# $ → refers to the last line.
+# d → option to delete.
+
+# 4- Display /etc/passwd file except the lines that contain the word “lp”.
+sed "/lp/d" /etc/passwd
+# /lp/ indicates lp pattern.
+# d option to delete
+
+# 5- Substitute all the words that contain “lp” with “mylp” in /etc/passwd file.
+sed 's/\w*lp\w*/mylp/g' /etc/passwd
+# s/.../.../g → substitute pattern with replacement in the whole file per line.
+# \w*lp\w* → matches any word that contains "lp".
+
+#***********************************************************************************#
+
+###Using awk utility###
+
+# 1- Print full name (comment) of all users in the system.
+awk -F: '{print $5}' /etc/passwd
+# -F: → sets : as the field delimiter.
+# $5 → the full name/comment field.
+
+# 2- Print login, full name (comment) and home directory of all users.
+awk -F: '{print NR, $1, $5, $6}' /etc/passwd
+# NR → current line number.
+# $1 → login, $5 → full name, $6 → home directory
+
+# 3- Print login, uid and full name (comment) of those uid is greater than 500
+awk -F: '$3 > 500 {print $1, $3, $5}' /etc/passwd
+# $3 > 500 → condition to check UID.
+# $1, $3, $5 → login, UID, full name.
+
+# 4- Print login, uid and full name (comment) of those uid is exactly 500
+awk -F: '$3 == 500 {print $1, $3, $5}' /etc/passwd
+# $3 == 500 → strict match for UID 500.
+
+# 5- Print lines from 5 to 15 from /etc/passwd
+awk 'NR>=5 && NR<=15' /etc/passwd
+# NR → line number.
+# NR>=5 && NR<=15 → range condition.
+
+# 6- Change lp to mylp
+awk '{gsub(/lp/, "mylp"); print}' /etc/passwd
+# gsub(/lp/, "mylp") → global substitution in the line.
+# print → output modified line.
+
+# 7- Print all information about greatest uid
+awk -F: 'max<$3 {max=$3; line=$0} END {print line}' /etc/passwd
+# max<$3 → update max UID and save line if new max found.
+# END → after reading all lines, print the saved line.
+
+# 8- Get the sum of all accounts id’s
+awk -F: '{sum += $3} END {print "Sum of UIDs:", sum}' /etc/passwd
+# sum += $3 → accumulate UID.
+# END → final output after all lines.
+
+# Bonus: Get the sum of UIDs per group (GID)
+awk -F: '{uid[$4]+=$3} END {for (g in uid) print "Group ID:", g, "→ UID Sum:", uid[g]}' /etc/passwd
+# uid[$4] += $3 → group GID ($4) as key, sum of UIDs as value.
+# Final for loop → prints group-wise UID sums.
