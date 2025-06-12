@@ -94,7 +94,7 @@ awk -F: '{sum += $3} END {print "Sum of UIDs:", sum}' /etc/passwd
 # END → final output after all lines.
 
 # Bonus: Get the sum of UIDs per group (GID)
-echo -e "\nBonus: Calculating the sum of UIDs per group (GID):"
+echo -e "\n9. Calculating the sum of UIDs per group (GID):"
 awk -F: '{uid[$4]+=$3} END {for (g in uid) print "Group ID:", g, "→ UID Sum:", uid[g]}' /etc/passwd
 # uid[$4] += $3 → group GID ($4) as key, sum of UIDs as value.
 # Final for loop → prints group-wise UID sums.
